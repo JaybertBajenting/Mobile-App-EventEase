@@ -64,9 +64,13 @@ public class MainActivity extends AppCompatActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
+
     private void makePostRequest(String extractedValue) {
         String url = "http://192.168.1.3:8080/api/v1/auth/admin/attend/" + extractedValue;
         //kol ilisi nang 192.168.1.3 sa ip sa imo laptop
+
+
 
 
 
