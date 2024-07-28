@@ -1,34 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
-
-
-
-
-    <Button
-        android:id="@+id/scanner"
-        android:layout_width="270dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="63dp"
-        android:layout_marginTop="19dp"
-        android:layout_marginEnd="60dp"
-        android:text="Attendance Scanner"
-        />
-
-    <TextView
-        android:id="@+id/text"
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_below="@+id/scanner"
-        android:layout_marginTop="19dp"
-        android:textSize="30dp"
-        />
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        tools:context=".MainActivity">
 
-</RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/yellow_primary">
+
+                <ImageView
+                    android:id="@+id/logoImageView"
+                    android:layout_width="200dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/logo"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"
+                    android:padding="8dp"
+                    android:contentDescription="App Logo"/>
+
+            </FrameLayout>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/eventCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="6dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+
+                    <ImageView
+                        android:id="@+id/eventImageView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        android:contentDescription="Event Image"/>
+
+                    <TextView
+                        android:id="@+id/eventNameText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/red_primary"/>
+
+                    <TextView
+                        android:id="@+id/eventDescriptionText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="16dp"
+                        android:paddingBottom="16dp"
+                        android:textSize="16sp"
+                        android:textColor="@color/black"/>
+
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <LinearLayout
+                android:id="@+id/buttonLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="24dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/scanner"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Scan QR Code"
+                    android:textColor="@color/white"
+                    app:backgroundTint="@color/red_primary"
+                    app:cornerRadius="8dp"
+                    android:layout_marginEnd="8dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/refresh_event"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Refresh Event"
+                    android:textColor="@color/white"
+                    app:backgroundTint="@color/red_primary"
+                    app:cornerRadius="8dp"
+                    android:layout_marginStart="8dp"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginBottom="16dp"
+                android:textSize="18sp"
+                android:textColor="@color/black"/>
+
+        </LinearLayout>
+
+</ScrollView>
