@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,27 +32,41 @@ import com.android.volley.toolbox.Volley;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity {
 
     private Button scan_btn;
     private Button refresh_event_btn;
     private TextView textView;
-    private TextView eventInfoText;
-    private ImageView eventImageView;
     private TextView eventNameText;
     private TextView eventDescriptionText;
+    private TextView eventTypeText;
+    private ImageView eventImageView;
+    private ImageView profilePictureView;
+    private TextView userFullNameText;
+    private LinearLayout userInfoLayout;
+    private Button approveButton;
+    private Button rejectButton;
+    private Button timeoutButton;
+
     private static int idEvent = 0;
     private Handler mHandler = new Handler(Looper.getMainLooper());
     private RequestQueue requestQueue;
+    private String scannedUsername;
+
+
+
+    private static String ipAddress = "https://eventease-q2yh.onrender.com";
+
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,31 +83,51 @@ public class MainActivity extends AppCompatActivity {
     private void initializeViews() {
         scan_btn = findViewById(R.id.scanner);
         refresh_event_btn = findViewById(R.id.refresh_event);
-        textView = findViewById(R.id.text);
+        //textView = findViewById(R.id.text);
         eventNameText = findViewById(R.id.eventNameText);
         eventDescriptionText = findViewById(R.id.eventDescriptionText);
+        eventTypeText = findViewById(R.id.eventTypeText);
         eventImageView = findViewById(R.id.eventImageView);
+        profilePictureView = findViewById(R.id.profilePictureView);
+        userFullNameText = findViewById(R.id.userFullNameText);
+        userInfoLayout = findViewById(R.id.userInfoLayout);
+        approveButton = findViewById(R.id.approveButton);
+        rejectButton = findViewById(R.id.rejectButton);
+        timeoutButton = findViewById(R.id.timeoutButton);
     }
 
     private void setupListeners() {
         scan_btn.setOnClickListener(v -> initiateScan());
         refresh_event_btn.setOnClickListener(v -> getCurrentEvent());
+        approveButton.setOnClickListener(v -> {
+            if (scannedUsername != null && !scannedUsername.isEmpty()) {
+              //  makePostRequest(scannedUsername);
+            } else {
+                Toast.makeText(MainActivity.this, "No user scanned", Toast.LENGTH_SHORT).show();
+            }
+        });
+        rejectButton.setOnClickListener(v -> resetUserInfo());
+        timeoutButton.setOnClickListener(v -> {
+            if (scannedUsername != null && !scannedUsername.isEmpty()) {
+                makePostRequest(scannedUsername, "timeout");
+            } else {
+                Toast.makeText(MainActivity.this, "No user scanned", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void initiateScan() {
-        IntentIntegrator intentIntegrator = new IntentIntegrator(MainActivity.this);
-        intentIntegrator.setOrientationLocked(true);
-        intentIntegrator.setPrompt("Scan user QR Code");
-        intentIntegrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
-        intentIntegrator.setCaptureActivity(CaptureActivityPortrait.class);
-        intentIntegrator.initiateScan();
-        intentIntegrator.setBeepEnabled(false);
+        IntentIntegrator integrator = new IntentIntegrator(this);
+        integrator.setBeepEnabled(false);
+        integrator.setPrompt("Scan a QR code");
+        integrator.setOrientationLocked(true);
+        integrator.setCaptureActivity(CaptureActivityPortrait.class);
+        integrator.initiateScan();
     }
-
 
     private void getCurrentEvent() {
         Log.d("GetCurrentEvent", "Starting getCurrentEvent");
-        String url = "https://eventease-oor7.onrender.com/api/v1/auth/event/getEventNow";
+        String url =  ipAddress+"/api/v1/auth/event/getEventNow";
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 this::handleEventResponse,
@@ -127,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
 
                 updateEventUI(eventName, eventDescription);
                 loadEventImage(eventId);
+                getAttendanceCount(eventId);
             } catch (Exception e) {
                 Log.e("EventDebug", "Error parsing event data: " + e.getMessage(), e);
                 showNoEventMessage("Error parsing event data");
@@ -150,19 +186,18 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
-
     private void showNoEventMessage(String message) {
         runOnUiThread(() -> {
             eventNameText.setText(message);
             eventDescriptionText.setText("");
+            eventTypeText.setVisibility(View.GONE);
             eventImageView.setImageResource(android.R.color.transparent);
             findViewById(R.id.eventCard).setVisibility(View.VISIBLE);
         });
     }
 
     private void loadEventImage(int eventId) {
-        String imageUrl = "https://eventease-oor7.onrender.com/api/v1/auth/event/getEventPicture/" + eventId;
+        String imageUrl = ipAddress+"/api/v1/auth/event/getEventPicture/" + eventId;
 
         ImageRequest imageRequest = new ImageRequest(imageUrl,
                 bitmap -> runOnUiThread(() -> {
@@ -178,72 +213,116 @@ public class MainActivity extends AppCompatActivity {
         requestQueue.add(imageRequest);
     }
 
+    private void getAttendanceCount(int eventId) {
+        String url = ipAddress+"/api/v1/auth/admin/count/" + eventId;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    try {
+                        int count = Integer.parseInt(response);
+                        updateEventTypeUI(count);
+                    } catch (NumberFormatException e) {
+                        Log.e("AttendanceCount", "Error parsing response to integer", e);
+                    }
+                },
+                error -> Log.e("AttendanceCount", "Error fetching attendance count: " + error.getMessage())
+        );
+
+        requestQueue.add(stringRequest);
+    }
+
+    private void updateEventTypeUI(int count) {
+        String eventType = (count <= 2) ? "One Time Event" : "Multi-day Event";
+        runOnUiThread(() -> {
+            eventTypeText.setText(eventType);
+            eventTypeText.setVisibility(View.VISIBLE);
+        });
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         IntentResult intentResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (intentResult != null) {
             String qrContent = intentResult.getContents();
+            Log.d("QRScanResult", "QR Code content: " + qrContent);
             if (qrContent != null) {
-                makePostRequest(qrContent);
+                getUserByUsername(idEvent, qrContent);
             }
+        } else if (resultCode == RESULT_OK && data != null) {
+            if (data.getBooleanExtra("attendSuccess", false)) {
+                Toast.makeText(this, "Attendance recorded successfully", Toast.LENGTH_SHORT).show();
+            } else if (data.getBooleanExtra("timeoutSuccess", false)) {
+                Toast.makeText(this, "Timeout recorded successfully", Toast.LENGTH_SHORT).show();
+            }
+            getCurrentEvent();
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
-    private void makePostRequest(String extractedValue) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
-        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Manila"));
-        String currentPhTime = sdf.format(new Date());
+    private void getUserByUsername(long eventId, String uuid) {
+        String url = ipAddress+"/api/v1/auth/admin/getUserByUuid/" + eventId + "/" + uuid;
+        Log.d("getUserByUsername", "Requesting URL: " + url);
 
-        String url = "https://eventease-oor7.onrender.com/api/v1/auth/admin/attend/" + idEvent + "/" + extractedValue + "/?attendanceDate=" + currentPhTime;
-
-        StringRequest request = new StringRequest(Request.Method.POST, url,
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {
-                    Log.d("NetworkResponse", "Success: " + response);
-                    String message = "Attendance submitted successfully for " + extractedValue + "!";
-                    handleSuccessResponse(response, message, extractedValue);
+                    Log.d("UserResponse", "User data: " + response.toString());
+                    try {
+                        long userId = response.getLong("id");
+                        String firstName = response.getString("firstName");
+                        String lastName = response.getString("lastName");
+                        String fullName = firstName + " " + lastName;
+
+                        Intent intent = new Intent(MainActivity.this, UserInfoActivity.class);
+                        intent.putExtra("userId", userId);
+                        intent.putExtra("fullName", fullName);
+                        intent.putExtra("uuid", uuid);
+                        intent.putExtra("eventId", eventId);
+                        startActivityForResult(intent, 1);
+                    } catch (Exception e) {
+                        Log.e("UserResponse", "Error parsing user data", e);
+                    }
                 },
-                this::handleErrorResponse
-        ) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json");
-                return headers;
-            }
-        };
+                error -> {
+                    Log.e("UserResponse", "Error: " + error.getMessage());
+                    String errorMessage = "Error: User not found or not authorized";
 
-        request.setRetryPolicy(new DefaultRetryPolicy(30000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        requestQueue.add(request);
+                    if (error.networkResponse != null) {
+                        int statusCode = error.networkResponse.statusCode;
+                        if (statusCode == 409) {
+                            errorMessage = "User not joined to this event or attendance already checked";
+
+                            try {
+                                String responseBody = new String(error.networkResponse.data, "UTF-8");
+                                JSONObject jsonResponse = new JSONObject(responseBody);
+                                String detailedMessage = jsonResponse.getString("messages");
+                                errorMessage =  detailedMessage;
+                            } catch (UnsupportedEncodingException | JSONException e) {
+                                Log.e("UserResponse", "Error parsing response body", e);
+                            }
+                        }
+                    }
+
+                    final String finalErrorMessage = errorMessage;
+                    runOnUiThread(() -> {
+                        Toast.makeText(MainActivity.this, finalErrorMessage, Toast.LENGTH_LONG).show();
+                        resetUserInfo();
+                    });
+                }
+        );
+
+        requestQueue.add(jsonObjectRequest);
     }
 
-    private void handleSuccessResponse(String response, String message, String extractedValue) {
-        Log.d("SuccessResponse", "Entering handleSuccessResponse");
-        mHandler.post(() -> {
-            try {
-                Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
-                textView.setText("Success: " + extractedValue);
-                eventNameText.setText(message);
-
-                mHandler.postDelayed(() -> new Thread(this::getCurrentEvent).start(), 100);
-
-                Log.d("SuccessResponse", "handleSuccessResponse completed");
-            } catch (Exception e) {
-                Log.e("UIUpdate", "Error updating UI: " + e.getMessage(), e);
-            }
-        });
+    private void makePostRequest(String extractedValue, String action) {
+        // This method is now handled in UserInfoActivity
+        // You can remove it from MainActivity if it's no longer used here
     }
 
-    private void handleErrorResponse(VolleyError error) {
-        Log.e("NetworkError", "Error: " + error.getMessage());
-        runOnUiThread(() -> {
-            try {
-                Toast.makeText(MainActivity.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                textView.setText("User not found or error occurred");
-            } catch (Exception e) {
-                Log.e("UIUpdate", "Error updating UI: " + e.getMessage());
-            }
-        });
+    private void resetUserInfo() {
+        userInfoLayout.setVisibility(View.GONE);
+        scannedUsername = null;
+        profilePictureView.setImageResource(android.R.color.transparent);
+        userFullNameText.setText("");
     }
 }
