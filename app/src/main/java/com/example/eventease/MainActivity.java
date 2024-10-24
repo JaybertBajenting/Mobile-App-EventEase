@@ -1,4 +1,5 @@
-package com.example.eventease;
+
+        package com.example.eventease;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,12 +27,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.ImageRequest;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -62,8 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    private static String ipAddress = "https://eventease-q2yh.onrender.com";
-
+    private static String ipAddress = "https://king-prawn-app-92pca.ondigitalocean.app";
 
 
 
@@ -101,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
         refresh_event_btn.setOnClickListener(v -> getCurrentEvent());
         approveButton.setOnClickListener(v -> {
             if (scannedUsername != null && !scannedUsername.isEmpty()) {
-              //  makePostRequest(scannedUsername);
+                //  makePostRequest(scannedUsername);
             } else {
                 Toast.makeText(MainActivity.this, "No user scanned", Toast.LENGTH_SHORT).show();
             }
@@ -127,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void getCurrentEvent() {
         Log.d("GetCurrentEvent", "Starting getCurrentEvent");
-        String url =  ipAddress+"/api/v1/auth/event/getEventNow";
+        String url = ipAddress + "/api/v1/auth/event/getEventNow";
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 this::handleEventResponse,
@@ -151,13 +153,13 @@ public class MainActivity extends AppCompatActivity {
         requestQueue.add(jsonObjectRequest);
     }
 
-    private void handleEventResponse(JSONObject response) {
-        Log.d("ServerResponse", "Full response: " + response.toString());
-        if (response.has("eventName")) {
+    private void handleEventResponse(JSONObject eventObject) {
+        Log.d("ServerResponse", "Full response: " + eventObject.toString());
+        if (eventObject.has("eventName")) {
             try {
-                String eventName = response.getString("eventName");
-                String eventDescription = response.optString("eventDescription", "No description available");
-                int eventId = response.getInt("id");
+                String eventName = eventObject.getString("eventName");
+                String eventDescription = eventObject.optString("eventDescription", "No description available");
+                int eventId = eventObject.getInt("id");
                 idEvent = eventId;
 
                 updateEventUI(eventName, eventDescription);
@@ -214,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getAttendanceCount(int eventId) {
-        String url = ipAddress+"/api/v1/auth/admin/count/" + eventId;
+        String url = ipAddress+"/api/v1/auth/event/count/" + eventId;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> {
@@ -260,8 +262,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+
     private void getUserByUsername(long eventId, String uuid) {
-        String url = ipAddress+"/api/v1/auth/admin/getUserByUuid/" + eventId + "/" + uuid;
+        String url = ipAddress+"/api/v1/auth/getUserByUuid/" + eventId + "/" + uuid;
         Log.d("getUserByUsername", "Requesting URL: " + url);
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
@@ -315,8 +319,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void makePostRequest(String extractedValue, String action) {
-        // This method is now handled in UserInfoActivity
-        // You can remove it from MainActivity if it's no longer used here
+
     }
 
     private void resetUserInfo() {

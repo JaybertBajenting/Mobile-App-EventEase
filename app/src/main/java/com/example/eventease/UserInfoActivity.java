@@ -46,7 +46,9 @@ public class UserInfoActivity extends AppCompatActivity {
     private long eventId;
 
 
-    private static String ipAddress = "https://eventease-q2yh.onrender.com";
+    private static String ipAddress = "https://king-prawn-app-92pca.ondigitalocean.app";
+
+
 
 
     @Override
@@ -83,6 +85,7 @@ public class UserInfoActivity extends AppCompatActivity {
         timeoutButton.setOnClickListener(v -> makePostRequest(uuid, "timeout"));
         rejectButton.setOnClickListener(v -> finish());
     }
+
 
     private void getProfilePicture(long userId) {
         String url =  ipAddress + "/api/v1/auth/user/getProfilePicture/" + userId;
@@ -131,7 +134,7 @@ public class UserInfoActivity extends AppCompatActivity {
         }
 
         String dateParam = action.equals("attend") ? "attendanceDate" : "timeoutDate";
-        String url =  ipAddress+ "/api/v1/auth/admin/" + action + "/" + eventId + "/" + extractedValue + "/?" + dateParam + "=" + encodedDateTime;
+        String url =  ipAddress+ "/api/v1/auth/" + action + "/" + eventId + "/" + extractedValue + "/?" + dateParam + "=" + encodedDateTime;
 
         StringRequest request = new StringRequest(Request.Method.POST, url,
                 response -> {

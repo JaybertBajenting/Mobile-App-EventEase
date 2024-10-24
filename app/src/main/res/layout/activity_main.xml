@@ -1,166 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:context=".MainActivity">
-
-    <LinearLayout
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        tools:context=".MainActivity">
 
-        <FrameLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/yellow_primary">
+            android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/logoImageView"
-                android:layout_width="200dp"
-                android:layout_height="80dp"
-                android:src="@drawable/logo"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:padding="8dp"
-                android:contentDescription="App Logo"/>
-
-        </FrameLayout>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/eventCard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="6dp">
-
-            <LinearLayout
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:background="@color/yellow_primary">
 
                 <ImageView
-                    android:id="@+id/eventImageView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
+                    android:id="@+id/logoImageView"
+                    android:layout_width="200dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/logo"
                     android:scaleType="fitCenter"
-                    android:contentDescription="Event Image"/>
+                    android:layout_gravity="center"
+                    android:padding="8dp"
+                    android:contentDescription="App Logo"/>
 
-                <TextView
-                    android:id="@+id/eventNameText"
+            </FrameLayout>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/eventCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="6dp">
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/red_primary"/>
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/eventDescriptionText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingHorizontal="16dp"
-                    android:paddingBottom="16dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/black"/>
+                    <ImageView
+                        android:id="@+id/eventImageView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        android:contentDescription="Event Image"/>
 
-                <TextView
-                    android:id="@+id/eventTypeText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingHorizontal="16dp"
-                    android:paddingBottom="16dp"
-                    android:textSize="16sp"
-                    android:textStyle="italic"
-                    android:textColor="@color/red_primary"
-                    android:visibility="gone"/>
+                    <TextView
+                        android:id="@+id/eventNameText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/red_primary"/>
 
-            </LinearLayout>
+                    <TextView
+                        android:id="@+id/eventDescriptionText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="16dp"
+                        android:paddingBottom="16dp"
+                        android:textSize="16sp"
+                        android:textColor="@color/black"/>
 
-        </androidx.cardview.widget.CardView>
+                    <TextView
+                        android:id="@+id/eventTypeText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="16dp"
+                        android:paddingBottom="16dp"
+                        android:textSize="16sp"
+                        android:textStyle="italic"
+                        android:textColor="@color/red_primary"
+                        android:visibility="gone"/>
 
-        <LinearLayout
-            android:id="@+id/buttonLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="24dp">
+                </LinearLayout>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/scanner"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="Scan QR Code"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                android:padding="12dp"
-                app:backgroundTint="@color/red_primary"
-                app:cornerRadius="8dp"
-                android:layout_marginEnd="8dp"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:stateListAnimator="@anim/button_scale"/>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/refresh_event"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="Refresh Event"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                android:padding="12dp"
-                app:backgroundTint="@color/red_primary"
-                app:cornerRadius="8dp"
-                android:layout_marginStart="8dp"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:stateListAnimator="@anim/button_scale"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/userInfoLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone"
-            android:layout_margin="16dp">
-
-            <ImageView
-                android:id="@+id/profilePictureView"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_gravity="center"
-                android:contentDescription="Profile Picture"/>
-
-            <TextView
-                android:id="@+id/userFullNameText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_marginTop="16dp"/>
+            </androidx.cardview.widget.CardView>
 
             <LinearLayout
+                android:id="@+id/buttonLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="16dp">
+                android:gravity="center"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="24dp">
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/approveButton"
+                    android:id="@+id/scanner"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="Approve"
+                    android:text="Scan QR Code"
                     android:textColor="@color/white"
                     android:textStyle="bold"
                     android:padding="12dp"
@@ -171,11 +109,11 @@
                     android:stateListAnimator="@anim/button_scale"/>
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/rejectButton"
+                    android:id="@+id/refresh_event"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="Reject"
+                    android:text="Refresh Event"
                     android:textColor="@color/white"
                     android:textStyle="bold"
                     android:padding="12dp"
@@ -188,28 +126,91 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/userInfoLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="16dp">
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_margin="16dp">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/timeoutButton"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                <ImageView
+                    android:id="@+id/profilePictureView"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="Profile Picture"/>
+
+                <TextView
+                    android:id="@+id/userFullNameText"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Timeout"
-                    android:textColor="@color/white"
+                    android:layout_gravity="center"
+                    android:textSize="18sp"
                     android:textStyle="bold"
-                    android:padding="12dp"
-                    app:backgroundTint="@color/red_primary"
-                    app:cornerRadius="8dp"
-                    android:layout_marginStart="8dp"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    android:stateListAnimator="@anim/button_scale"/>
+                    android:layout_marginTop="16dp"/>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="16dp">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/approveButton"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="Approve"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:padding="12dp"
+                        app:backgroundTint="@color/red_primary"
+                        app:cornerRadius="8dp"
+                        android:layout_marginEnd="8dp"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:stateListAnimator="@anim/button_scale"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/rejectButton"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="Reject"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:padding="12dp"
+                        app:backgroundTint="@color/red_primary"
+                        app:cornerRadius="8dp"
+                        android:layout_marginStart="8dp"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:stateListAnimator="@anim/button_scale"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="16dp">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/timeoutButton"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="Timeout"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:padding="12dp"
+                        app:backgroundTint="@color/red_primary"
+                        app:cornerRadius="8dp"
+                        android:layout_marginStart="8dp"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:stateListAnimator="@anim/button_scale"/>
+
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
 
-    </LinearLayout>
+        </LinearLayout>
 </ScrollView>
+
